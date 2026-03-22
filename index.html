@@ -63,6 +63,7 @@
     justify-content:center;
     align-items:center;
     width:100%;
+    min-height:70px;
   }
 
   .logo-link{
@@ -81,9 +82,9 @@
 
   .logo-fallback{
     font-size:40px;
-    line-height:1;
+    line-height:1.1;
     font-weight:800;
-    letter-spacing:.5px;
+    letter-spacing:.3px;
     color:var(--accent);
     text-align:center;
   }
@@ -447,7 +448,7 @@
     align-items:center;
     justify-content:center;
     gap:12px;
-    color:var(--accent);
+    color:var(--muted);
     box-shadow:var(--shadow);
   }
 
@@ -457,9 +458,15 @@
     animation:pulse 1s infinite;
   }
 
+  .loader-text{
+    color:var(--muted);
+    font-size:15px;
+    font-weight:500;
+  }
+
   @keyframes pulse{
     0%,100%{transform:scale(1)}
-    50%{transform:scale(1.22)}
+    50%{transform:scale(1.16)}
   }
 
   .empty-state{
@@ -968,8 +975,8 @@
     <section>
       <div class="grid" id="grid">
         <div class="loader-back" id="loader">
-          <div class="loader-circle">★</div>
-          <div>Cargando productos...</div>
+          <div class="loader-circle">☕</div>
+          <div class="loader-text">Cargando productos...</div>
         </div>
       </div>
     </section>
@@ -1013,7 +1020,6 @@
     </div>
     <div class="drawer-body">
       <div class="chips" id="categoryButtonsMobile"></div>
-
       <section class="social-block" id="socialBlockMobile" style="margin-top:18px;"></section>
     </div>
   </div>
@@ -1049,9 +1055,7 @@
       <div class="modal-grid">
         <div>
           <h2 class="modal-title-main" id="mTitle">Producto</h2>
-
           <div class="modal-hero" id="mThumb"></div>
-
           <div class="modal-thumbs" id="mGallery"></div>
         </div>
 
@@ -1090,14 +1094,15 @@
 
   const CONFIG = {
     brandName: "ASTREA",
+    brandTitle: "@TuEmpresa Catálogo",
     footerText: "ASTREA © 2026",
     phone: "595971506233",
 
-    logoUrl: "https://github.com/sitesformega-web/POGGY/blob/main/PIC's/POGGY.png?raw=true",
-    logoLink: "https://www.instagram.com/poggy.py/",
+    logoUrl: "",
+    logoLink: "",
 
     socials: {
-      instagram: "https://www.instagram.com/poggy.py/",
+      instagram: "",
       facebook: "",
       tiktok: ""
     }
@@ -1204,13 +1209,6 @@
       .replace(/'/g, '&#039;');
   }
 
-  function escapeAttr(str){
-    return String(str || '')
-      .replace(/\\/g, '\\\\')
-      .replace(/'/g, "\\'")
-      .replace(/"/g, '&quot;');
-  }
-
   function getProductGallery(raw){
     const fromArray = Array.isArray(raw.galeriaArray) ? raw.galeriaArray : [];
     const fromText = splitGallery(raw['Galería'] || '');
@@ -1241,21 +1239,39 @@
     };
   }
 
+  function renderLogoFallback(){
+    const title = String(CONFIG.brandTitle || CONFIG.brandName || 'ASTREA Catálogo').trim();
+    logoWrap.innerHTML = '<div class="logo-fallback">' + escapeHtml(title) + '</div>';
+  }
+
   function renderLogo(){
     const logoUrl = fixImageUrl(CONFIG.logoUrl || '');
     const logoLink = String(CONFIG.logoLink || '').trim();
-    const brand = escapeHtml(CONFIG.brandName || 'ASTREA');
 
-    if(logoUrl){
-      const imgHtml = '<img class="logo-img" src="' + escapeHtml(logoUrl) + '" alt="' + brand + '" onerror="this.closest(\\'.logo-wrap\\').innerHTML = \\'<div class=&quot;logo-fallback&quot;>' + brand + '</div>\\'">';
+    footerText.textContent = CONFIG.footerText || ((CONFIG.brandName || 'ASTREA') + ' © 2026');
+
+    if(!logoUrl){
+      renderLogoFallback();
+      return;
+    }
+
+    const img = new Image();
+
+    img.onload = function(){
+      const safeUrl = escapeHtml(logoUrl);
+      const safeAlt = escapeHtml(CONFIG.brandName || CONFIG.brandTitle || 'Logo');
+
+      const imgHtml = '<img class="logo-img" src="' + safeUrl + '" alt="' + safeAlt + '">';
       logoWrap.innerHTML = logoLink
         ? '<a class="logo-link" href="' + escapeHtml(logoLink) + '" target="_blank" rel="noopener">' + imgHtml + '</a>'
         : imgHtml;
-    } else {
-      logoWrap.innerHTML = '<div class="logo-fallback">' + brand + '</div>';
-    }
+    };
 
-    footerText.textContent = CONFIG.footerText || (CONFIG.brandName || 'ASTREA') + ' © 2026';
+    img.onerror = function(){
+      renderLogoFallback();
+    };
+
+    img.src = logoUrl;
   }
 
   function socialIcon(name){
@@ -1332,11 +1348,15 @@
       const res = await fetch(CATALOG_URL, { cache:'no-store' });
       const data = await res.json();
 
-      if(!Array.isArray(data)){
+      const rows = Array.isArray(data)
+        ? data
+        : (data && Array.isArray(data.rows) ? data.rows : null);
+
+      if(!rows){
         throw new Error('La respuesta del catálogo no es válida.');
       }
 
-      products = data
+      products = rows
         .map(mapProduct)
         .filter(function(p){
           return !!p.id && !!p.name;
@@ -1588,8 +1608,12 @@
           <div class="cart-name">${escapeHtml(item.name)}</div>
           <div class="cart-code">Código: ${escapeHtml(item.code || '-')}</div>
         </div>
-        <button class="btn btn-primary" type="button" style="padding:9px 12px;border-radius:12px;" onclick="removeFromCart('${escapeAttr(item.id)}')">Quitar</button>
+        <button class="btn btn-primary" type="button" style="padding:9px 12px;border-radius:12px;">Quitar</button>
       `;
+
+      li.querySelector('button').addEventListener('click', function(){
+        removeFromCart(item.id);
+      });
 
       container.appendChild(li);
     });
@@ -1695,8 +1719,6 @@
       }
     }
   });
-
-  window.removeFromCart = removeFromCart;
 
   renderLogo();
   renderSocials(socialBlock);
