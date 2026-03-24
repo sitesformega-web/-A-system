@@ -1,45 +1,170 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>ASTREA Catálogo</title>
 
-<link rel="stylesheet" href="./assets/css/se ve.css">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="./assets/css/se ve.css">
 </head>
-
 <body>
-
 <div class="app">
   <header class="site-header">
-    <div id="logoWrap"></div>
+    <div class="logo-wrap" id="logoWrap"></div>
 
     <div class="searchbar">
-      <input id="searchInput" class="search-input" placeholder="Buscar...">
+      <input
+        class="search-input"
+        id="searchInput"
+        type="search"
+        placeholder="Buscar por nombre, código o descripción..."
+        autocomplete="off"
+      >
     </div>
 
     <div class="catalog-meta">
-      Mostrando <strong id="count">0</strong> productos
+      Mostrando <strong style="margin:0 4px;" id="count">0</strong> productos
     </div>
   </header>
 
   <main class="shell">
-    <aside id="leftAside"></aside>
+    <aside id="leftAside">
+      <div class="sticky">
+        <section class="panel interest-card">
+          <div class="panel-body">
+            <div class="panel-kicker light">
+              <span class="icon-star">★</span>
+              <span>Intereses</span>
+            </div>
+            <div class="chips" id="categoryButtons"></div>
+          </div>
+        </section>
+
+        <section class="social-block" id="socialBlock"></section>
+      </div>
+    </aside>
 
     <section>
-      <div id="grid" class="grid"></div>
+      <div class="grid" id="grid">
+        <div class="loader-back" id="loader">
+          <div class="loader-circle">☕</div>
+          <div class="loader-text">Cargando productos...</div>
+        </div>
+      </div>
     </section>
 
-    <aside id="rightAside"></aside>
+    <aside id="rightAside">
+      <div class="sticky">
+        <section class="panel side-summary">
+          <div class="panel-body">
+            <div class="summary-title">
+              <span class="icon-star">★</span>
+              <div class="summary-title-text">¡Hola!, me interesa esto...</div>
+            </div>
+
+            <ul class="summary-list" id="cartItems"></ul>
+
+            <div class="summary-footer">
+              <button id="sendCartBtn" class="btn btn-primary btn-block">Consultar con asesor</button>
+              <button id="clearCartBtn" class="btn btn-soft btn-block" style="margin-top:10px;">Vaciar selección</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </aside>
   </main>
 
-  <footer id="footerText"></footer>
+  <footer class="footer">
+    <div class="footer-inner" id="footerText">ASTREA © 2026</div>
+  </footer>
+</div>
+
+<div class="fab-row">
+  <button class="fab" id="openCatsFab">☰ Intereses</button>
+  <button class="fab" id="openCartFab">★ Selección (<span id="cartCountFab">0</span>)</button>
+</div>
+
+<div class="drawer-back" id="catsDrawerBack" aria-hidden="true">
+  <div class="drawer" role="dialog" aria-modal="true">
+    <div class="drawer-head">
+      <div class="drawer-title">Intereses</div>
+      <button class="close" id="closeCatsDrawer" type="button">✕</button>
+    </div>
+    <div class="drawer-body">
+      <div class="chips" id="categoryButtonsMobile"></div>
+      <section class="social-block" id="socialBlockMobile" style="margin-top:18px;"></section>
+    </div>
+  </div>
+</div>
+
+<div class="drawer-back" id="cartDrawerBack" aria-hidden="true">
+  <div class="drawer" role="dialog" aria-modal="true">
+    <div class="drawer-head">
+      <div class="drawer-title">Me interesa esto...</div>
+      <button class="close" id="closeCartDrawer" type="button">✕</button>
+    </div>
+    <div class="drawer-body">
+      <ul class="summary-list" id="cartItemsMobile" style="padding-left:20px;"></ul>
+      <div style="margin-top:18px;">
+        <button id="sendCartBtnMobile" class="btn btn-primary btn-block">Consultar con asesor</button>
+        <button id="clearCartBtnMobile" class="btn btn-soft btn-block" style="margin-top:10px;">Vaciar selección</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-back" id="modalBack" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true">
+    <button class="modal-nav modal-prev" id="modalPrevBtn" type="button" aria-label="Producto anterior">‹</button>
+    <button class="modal-nav modal-next" id="modalNextBtn" type="button" aria-label="Producto siguiente">›</button>
+
+    <div class="modal-inner">
+      <div class="modal-head">
+        <div class="modal-head-title">Detalle del producto</div>
+        <button class="close" id="closeModal" type="button">✕</button>
+      </div>
+
+      <div class="modal-grid">
+        <div>
+          <h2 class="modal-title-main" id="mTitle">Producto</h2>
+          <div class="modal-hero" id="mThumb"></div>
+          <div class="modal-thumbs" id="mGallery"></div>
+        </div>
+
+        <div>
+          <div class="modal-side-top">
+            <div>
+              <div class="modal-cat-line">
+                <span class="icon-dot"></span>
+                <span id="mCat">Categoría</span>
+              </div>
+            </div>
+            <div class="modal-side-star">★</div>
+          </div>
+
+          <p class="modal-desc" id="mDesc">Descripción del producto.</p>
+
+          <div class="modal-price-label">Código</div>
+          <div class="modal-price" id="mCode">-</div>
+
+          <div class="modal-price-label">Stock</div>
+          <div class="modal-price" id="mStock">N/D</div>
+
+          <div class="modal-note">Con disponibilidad sujeta a confirmación*</div>
+
+          <div class="modal-side-actions">
+            <button id="modalCarrito" class="btn btn-primary btn-block" type="button">Consultar con asesor</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script type="module" src="./assets/js/en Disney.js"></script>
-
 </body>
 </html>
