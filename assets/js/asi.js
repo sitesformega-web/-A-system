@@ -10,7 +10,7 @@ export const CONFIG = {
   logoLink: "",
 
   socials: {
-    instagram: "",
+    instagram: https://www.instagram.com/poggy.py ,
     facebook: "",
     tiktok: ""
   }
