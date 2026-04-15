@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ASTREA Catálogo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand-wrap" id="logoWrap"></div>
+
+    <div class="header-search">
+      <input
+        id="searchInput"
+        class="search-input"
+        type="search"
+        placeholder="Buscar por nombre, código o descripción"
+        aria-label="Buscar productos"
+      >
+    </div>
+
+    <div class="header-status">
+      <span class="status-pill">
+        Mostrando <strong id="count">0</strong> productos
+      </span>
+    </div>
+  </header>
+
+  <main class="shell">
+    <aside class="left-aside">
+      <section class="panel">
+        <div class="panel-kicker">
+          <span class="icon-dot"></span>
+          <span>Intereses</span>
+        </div>
+        <div id="categoryButtons" class="chip-group"></div>
+      </section>
+
+      <section class="panel" id="socialBlock"></section>
+    </aside>
+
+    <section class="catalog-area">
+      <div id="loader" class="loader-wrap">
+        <div class="loader-mark">☕</div>
+        <div class="loader-text">Cargando productos...</div>
+      </div>
+
+      <div id="grid" class="products-grid"></div>
+    </section>
+
+    <aside class="right-aside">
+      <section class="panel">
+        <div class="panel-kicker">
+          <span class="icon-dot"></span>
+          <span>Selección</span>
+        </div>
+
+        <ul id="cartItems" class="cart-list"></ul>
+
+        <div class="cart-actions">
+          <button id="sendCartBtn" class="btn btn-primary" type="button">
+            Consultar por WhatsApp
+          </button>
+          <button id="clearCartBtn" class="btn btn-light" type="button">
+            Vaciar selección
+          </button>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+    <div id="footerText">ASTREA © 2026</div>
+  </footer>
+
+  <div id="modalBack" class="modal-back" aria-hidden="true" style="display:none;">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+      <button id="closeModal" class="modal-close" type="button" aria-label="Cerrar detalle">×</button>
+
+      <button id="modalPrevBtn" class="modal-nav prev" type="button" aria-label="Producto anterior">
+        ‹
+      </button>
+
+      <button id="modalNextBtn" class="modal-nav next" type="button" aria-label="Producto siguiente">
+        ›
+      </button>
+
+      <div class="modal-grid">
+        <div class="modal-visual">
+          <div id="mThumb" class="modal-main-image"></div>
+          <div id="mGallery" class="modal-gallery"></div>
+        </div>
+
+        <div class="modal-info">
+          <div class="panel-kicker dark">
+            <span class="icon-dot"></span>
+            <span>Detalle</span>
+          </div>
+
+          <h2 id="mTitle" class="modal-title">Producto</h2>
+          <p id="mDesc" class="modal-desc">Descripción del producto.</p>
+
+          <div class="modal-meta">
+            <div class="meta-row">
+              <span class="meta-label">Código</span>
+              <strong id="mCode">-</strong>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Categoría</span>
+              <strong id="mCat">-</strong>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Stock</span>
+              <strong id="mStock">-</strong>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button id="modalCarrito" class="btn btn-primary" type="button">
+              Agregar a selección
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fab-row">
+    <button id="openCatsFab" class="fab" type="button" aria-label="Abrir intereses">
+      Intereses
+    </button>
+
+    <button id="openCartFab" class="fab fab-cart" type="button" aria-label="Abrir selección">
+      Selección <span id="cartCountFab" class="fab-count">0</span>
+    </button>
+  </div>
+
+  <div id="catsDrawerBack" class="drawer-back" aria-hidden="true" style="display:none;">
+    <div class="drawer">
+      <div class="drawer-head">
+        <h3>Intereses</h3>
+        <button id="closeCatsDrawer" class="drawer-close" type="button" aria-label="Cerrar intereses">×</button>
+      </div>
+
+      <div id="categoryButtonsMobile" class="chip-group mobile"></div>
+      <div id="socialBlockMobile" class="drawer-socials"></div>
+    </div>
+  </div>
+
+  <div id="cartDrawerBack" class="drawer-back" aria-hidden="true" style="display:none;">
+    <div class="drawer">
+      <div class="drawer-head">
+        <h3>Selección</h3>
+        <button id="closeCartDrawer" class="drawer-close" type="button" aria-label="Cerrar selección">×</button>
+      </div>
+
+      <ul id="cartItemsMobile" class="cart-list"></ul>
+
+      <div class="cart-actions">
+        <button id="sendCartBtnMobile" class="btn btn-primary" type="button">
+          Consultar por WhatsApp
+        </button>
+        <button id="clearCartBtnMobile" class="btn btn-light" type="button">
+          Vaciar selección
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
